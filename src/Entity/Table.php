@@ -11,7 +11,9 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\QueryParameter;
+use App\Dto\TableStatsDto;
 use App\Repository\TableRepository;
+use App\State\TableStatsDtoProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -25,10 +27,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(),
         new GetCollection(),
         new Patch(),
-        // new Get(
-        //     uriTemplate: 'tables/{id}/guests',
-        //     normalizationContext: ['groups'=>['guest:item', 'guest:list']]
-        // )
+        new GetCollection(
+            provider: TableStatsDtoProvider::class,
+            uriTemplate: '/table_stats',
+            normalizationContext: ['groups'=>['table_stats:item']],
+            output: TableStatsDto::class,
+            paginationEnabled: false
+        )
     ],
     normalizationContext: ['groups'=>['tables:item', 'tables:list']],
 )]
