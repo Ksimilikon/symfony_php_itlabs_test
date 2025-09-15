@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -13,6 +16,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TableRepository::class)]
 #[ORM\Table(name: '`table`')]
@@ -21,18 +25,14 @@ use Doctrine\ORM\Mapping as ORM;
         new Get(),
         new GetCollection(),
         new Patch(),
-    ]
+        // new Get(
+        //     uriTemplate: 'tables/{id}/guests',
+        //     normalizationContext: ['groups'=>['guest:item', 'guest:list']]
+        // )
+    ],
+    normalizationContext: ['groups'=>['tables:item', 'tables:list']],
 )]
-#[ApiResource(
-    uriTemplate: 'tables/{id}/guests',
-    operations: [new GetCollection()],
-    uriVariables: [
-        'id' => new Link(
-            fromClass: Table::class,
-            fromProperty: 'guests',
-        )
-    ]
-)]
+#[ApiFilter(NumericFilter::class, properties: ['num'])]
 class Table
 {
     /**
@@ -41,29 +41,36 @@ class Table
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['guest:item', 'guest:list', 'tables:item', 'tables:list'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['guest:item', 'guest:list', 'tables:item', 'tables:list'])]
     private ?int $num = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['guest:item', 'guest:list', 'tables:item', 'tables:list'])]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(['guest:item', 'guest:list', 'tables:item', 'tables:list'])]
     private ?int $maxGuests = null;
 
     #[ORM\Column]
+    #[Groups(['guest:item', 'guest:list', 'tables:item', 'tables:list'])]
     private ?int $guestsDef = null;
 
     #[ORM\Column]
+    #[Groups(['guest:item', 'guest:list', 'tables:item', 'tables:list'])]
     private ?int $guestsNow = null;
 
     #[ORM\OneToMany(targetEntity: GuestList::class, mappedBy: 'tables')]
-    private Collection $guestLists;
+    #[Groups(['tables:item', 'tables:list'])]
+    private Collection $guests;
 
     public function __construct()
     {
-        $this->guestLists = new ArrayCollection();
+        $this->guests = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -134,31 +141,32 @@ class Table
     /**
      * @return Collection<int, GuestList>
      */
-    public function getGuestLists(): Collection
+    public function getGuests(): Collection
     {
-        return $this->guestLists;
+        return $this->guests;
     }
 
-    public function addGuestList(GuestList $guestList): static
+    public function addGuest(GuestList $guest): static
     {
-        if (!$this->guestLists->contains($guestList)) {
-            $this->guestLists->add($guestList);
-            $guestList->setGuestLists($this);
+        if (!$this->guests->contains($guest)) {
+            $this->guests->add($guest);
+            $guest->setTables($this);
         }
 
         return $this;
     }
 
-    public function removeGuestList(GuestList $guestList): static
+    public function removeGuest(GuestList $guest): static
     {
-        if ($this->guestLists->removeElement($guestList)) {
+        if ($this->guests->removeElement($guest)) {
             // set the owning side to null (unless already changed)
-            if ($guestList->getGuestLists() === $this) {
-                $guestList->setGuestLists(null);
+            if ($guest->getTables() === $this) {
+                $guest->setTables(null);
             }
         }
 
         return $this;
     }
+
 
 }
