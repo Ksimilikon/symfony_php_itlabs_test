@@ -15,6 +15,10 @@ Atribute of commands in (--atribute) is optional.
 
 # Deploy
 
+## Without docker
+### Clone git 
+[] command: git clone "https://github.com/Ksimilikon/symfony_php_itlabs_test.git"
+
 ### Configure .env 
 copy .env.example to .env -> fill atributes
 
