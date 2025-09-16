@@ -173,5 +173,10 @@ class Table
         return $this;
     }
 
+    public function __toString(): string
+    {
+        return sprintf('Стол №%s (%s)', (string)($this->num), $this->description);
+    }
+
 
 }
