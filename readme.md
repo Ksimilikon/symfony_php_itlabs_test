@@ -17,22 +17,25 @@ Atribute of commands in (--atribute) is optional.
 
 ## Without docker
 ### Clone git 
-[] command: git clone "https://github.com/Ksimilikon/symfony_php_itlabs_test.git"
+- [ ] command: git clone "https://github.com/Ksimilikon/symfony_php_itlabs_test.git"
 
 ### Configure .env 
-copy .env.example to .env -> fill atributes
+- [ ] copy .env.example to .env -> fill atributes
 
 ### Install dependencies
-[] commands: composer install
+- [ ] commands: composer install
 
 ### Migrate database (after configure .env [DATABASE_URL])
-[] command: php bin/console doctrine:migrations:migrate
+- [ ] command: php bin/console doctrine:migrations:migrate
 
 ### After migration need insert user-admin (only dev mode in .env)
-[] command: php bin/console doctrine:fixtures:load (--append)
+- [ ] command: php bin/console doctrine:fixtures:load (--append)
     --append: add rows to DB without truncate rows;
 
+### Prodaction mode 
+- [ ] set prod in .env file
+
 ### Run app 
-[] commands: choice one
+- [ ] commands: choice one
     - php -S 127.0.0.1:8000 -t public 
     - symfony server:start
